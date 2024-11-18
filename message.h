@@ -1,9 +1,9 @@
+#ifndef MESSAGES_H
+#define MESSAGES_H
+
 #include <iostream>
 #include <cstring>
 #include <chrono>
-
-using namespace std;
-
 
 class BaseMessage {
 protected:
@@ -11,61 +11,36 @@ protected:
     int senderId;
 
 public:
-    BaseMessage(int senderId) : senderId(senderId) {
-        auto now =  chrono::system_clock::now();
-        sentDate = chrono::system_clock::to_time_t(now);
-    }
+    BaseMessage(int senderId);
+    virtual ~BaseMessage() = default;
 
     virtual void display() const = 0;
-    int getSenderId() const { return senderId; }
-    int getDate() const { return sentDate; }
-
-    void printDate() const {
-        cout << ctime(&this->sentDate);
-    }
+    int getSenderId() const;
+    int getDate() const;
+    void printDate() const;
 };
-
 
 class SimpleMessage : public BaseMessage {
 private:
     char message[200];
 
 public:
-    SimpleMessage(int senderId, const char *msg) : BaseMessage(senderId) {
-        strncpy(message, msg, 200);
-    }
+    SimpleMessage(int senderId, const char *msg);
+    ~SimpleMessage();
 
-    ~SimpleMessage() {
-        delete message;
-    }
-
-    void display() const override {
-        printDate();
-        cout << " | Sender ID: " << senderId << " | Message: " << message << endl;
-    }
+    void display() const override;
 };
-
 
 class PostMessage : public SimpleMessage {
 private:
     char imagePath[200];
 
 public:
-    PostMessage(int senderId, const char *msg, const char *imgPath)
-        : SimpleMessage(senderId, msg) {
-        strncpy(imagePath, imgPath, 200);
-    }
+    PostMessage(int senderId, const char *msg, const char *imgPath);
+    ~PostMessage();
 
-    ~PostMessage() {
-        delete imagePath;
-    }
-
-    void display() const override {
-        SimpleMessage::display();
-        cout << " | Image Path: " << imagePath << endl;
-    }
+    void display() const override;
 };
-
 
 class VoteMessage : public BaseMessage {
 private:
@@ -74,27 +49,11 @@ private:
     int optionCount;
 
 public:
-    VoteMessage(int senderId, const char *voteTitle, const char optionsArray[][200], int count)
-        : BaseMessage(senderId), optionCount(count) {
-        strncpy(title, voteTitle, 200);
-        for (int i = 0; i < count; i++) {
-            strncpy(options[i], optionsArray[i], 200);
-        }
-    }
+    VoteMessage(int senderId, const char *voteTitle, const char optionsArray[][200], int count);
+    ~VoteMessage();
 
-    ~VoteMessage() {
-        delete title, options;
-    }
-
-    void display() const override {
-        printDate();
-        cout << " | Sender ID: " << senderId << " | Vote Title: " << title << endl;
-        for (int i = 0; i < optionCount; i++) {
-            cout << "   Option " << i + 1 << ": " << options[i] << endl;
-        }
-    }
+    void display() const override;
 };
-
 
 class Messenger {
 private:
@@ -102,23 +61,11 @@ private:
     int messageCount;
 
 public:
-    Messenger() : messageCount(0) {}
+    Messenger();
+    ~Messenger();
 
-    ~Messenger() {
-        delete messages;
-    }
-
-    void addMessage(BaseMessage *message) {
-        if (messageCount < 100) {
-            messages[messageCount++] = message;
-        } else {
-            cout << "Message limit reached!" << endl;
-        }
-    }
-
-    void displayChat() const {
-        for (int i = 0; i < messageCount; i++) {
-            messages[i]->display();
-        }
-    }
+    void addMessage(BaseMessage *message);
+    void displayChat() const;
 };
+
+#endif
