@@ -44,3 +44,53 @@ public:
         cout << " | Sender ID: " << senderId << " | Message: " << message << endl;
     }
 };
+
+
+class PostMessage : public SimpleMessage {
+private:
+    char imagePath[200];
+
+public:
+    PostMessage(int senderId, const char *msg, const char *imgPath)
+        : SimpleMessage(senderId, msg) {
+        strncpy(imagePath, imgPath, 200);
+    }
+
+    ~PostMessage() {
+        delete imagePath;
+    }
+
+    void display() const override {
+        SimpleMessage::display();
+        cout << " | Image Path: " << imagePath << endl;
+    }
+};
+
+
+class VoteMessage : public BaseMessage {
+private:
+    char title[200];
+    char options[10][200];
+    int optionCount;
+
+public:
+    VoteMessage(int senderId, const char *voteTitle, const char optionsArray[][200], int count)
+        : BaseMessage(senderId), optionCount(count) {
+        strncpy(title, voteTitle, 200);
+        for (int i = 0; i < count; i++) {
+            strncpy(options[i], optionsArray[i], 200);
+        }
+    }
+
+    ~VoteMessage() {
+        delete title, options;
+    }
+
+    void display() const override {
+        printDate();
+        cout << " | Sender ID: " << senderId << " | Vote Title: " << title << endl;
+        for (int i = 0; i < optionCount; i++) {
+            cout << "   Option " << i + 1 << ": " << options[i] << endl;
+        }
+    }
+};
