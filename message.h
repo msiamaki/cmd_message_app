@@ -94,3 +94,31 @@ public:
         }
     }
 };
+
+
+class Messenger {
+private:
+    BaseMessage *messages[100];
+    int messageCount;
+
+public:
+    Messenger() : messageCount(0) {}
+
+    ~Messenger() {
+        delete messages;
+    }
+
+    void addMessage(BaseMessage *message) {
+        if (messageCount < 100) {
+            messages[messageCount++] = message;
+        } else {
+            cout << "Message limit reached!" << endl;
+        }
+    }
+
+    void displayChat() const {
+        for (int i = 0; i < messageCount; i++) {
+            messages[i]->display();
+        }
+    }
+};
